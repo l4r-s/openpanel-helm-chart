@@ -8,6 +8,7 @@ on:
       - 'Chart.yaml'
       - 'values.yaml'
       - 'templates/**'
+      - 'artifacthub-repo.yml'
   workflow_dispatch:
 
 jobs:

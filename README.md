@@ -321,6 +321,53 @@ api:
       cpu: "2000m"
 ```
 
+### Taints and Tolerations
+
+If your Kubernetes cluster has tainted nodes, you can configure tolerations for each component to allow pods to be scheduled on those nodes:
+
+```yaml
+# Example: Allow API pods to run on nodes with a dedicated taint
+api:
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "api"
+      effect: "NoSchedule"
+
+# Example: Allow PostgreSQL pods to run on database-dedicated nodes
+postgresql:
+  tolerations:
+    - key: "database"
+      operator: "Equal"
+      value: "postgresql"
+      effect: "NoSchedule"
+
+# Example: Multiple tolerations for ClickHouse
+clickhouse:
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "analytics"
+      effect: "NoSchedule"
+    - key: "workload"
+      operator: "Equal"
+      value: "heavy"
+      effect: "NoExecute"
+```
+
+**Available components:**
+- `api.tolerations` - Tolerations for API pods
+- `dashboard.tolerations` - Tolerations for Dashboard pods
+- `worker.tolerations` - Tolerations for Worker pods
+- `postgresql.tolerations` - Tolerations for PostgreSQL pods
+- `redis.tolerations` - Tolerations for Redis pods
+- `clickhouse.tolerations` - Tolerations for ClickHouse pods
+
+**Toleration effects:**
+- `NoSchedule` - Pods will not be scheduled on tainted nodes unless they have a matching toleration
+- `PreferNoSchedule` - Kubernetes will try to avoid scheduling pods on tainted nodes, but it's not required
+- `NoExecute` - Pods already running on the node will be evicted if they don't have a matching toleration
+
 ## Upgrading
 
 To upgrade to a newer version:

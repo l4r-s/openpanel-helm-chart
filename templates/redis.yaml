@@ -66,6 +66,10 @@ spec:
             periodSeconds: 5
           resources:
 {{ toYaml .Values.redis.resources | indent 12 }}
+{{- if .Values.redis.tolerations }}
+      tolerations:
+{{ toYaml .Values.redis.tolerations | indent 8 }}
+{{- end }}
 {{- if .Values.redis.persistence.enabled }}
   volumeClaimTemplates:
     - metadata:

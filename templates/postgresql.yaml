@@ -69,6 +69,10 @@ spec:
             periodSeconds: 5
           resources:
 {{ toYaml .Values.postgresql.resources | indent 12 }}
+{{- if .Values.postgresql.tolerations }}
+      tolerations:
+{{ toYaml .Values.postgresql.tolerations | indent 8 }}
+{{- end }}
 {{- if .Values.postgresql.persistence.enabled }}
   volumeClaimTemplates:
     - metadata:

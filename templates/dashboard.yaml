@@ -102,6 +102,10 @@ spec:
             timeoutSeconds: 3
           resources:
 {{ toYaml .Values.dashboard.resources | indent 12 }}
+{{- if .Values.dashboard.tolerations }}
+      tolerations:
+{{ toYaml .Values.dashboard.tolerations | indent 8 }}
+{{- end }}
       initContainers:
         - name: wait-for-api
           image: busybox:1.36

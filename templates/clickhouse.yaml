@@ -140,6 +140,10 @@ spec:
             periodSeconds: 5
           resources:
 {{ toYaml .Values.clickhouse.resources | indent 12 }}
+{{- if .Values.clickhouse.tolerations }}
+      tolerations:
+{{ toYaml .Values.clickhouse.tolerations | indent 8 }}
+{{- end }}
       volumes:
         - name: clickhouse-config
           configMap:
