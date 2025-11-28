@@ -430,6 +430,47 @@ worker:
       memory: &quot;2Gi&quot;
       cpu: &quot;2000m&quot;
 </code></pre>
+<h3>Taints and Tolerations</h3>
+<p>If your Kubernetes cluster has tainted nodes, you can configure tolerations for each component to allow pods to be scheduled on those nodes:</p>
+<pre><code class="language-yaml"># Example: Allow API pods to run on nodes with a dedicated taint
+api:
+  tolerations:
+    - key: &quot;dedicated&quot;
+      operator: &quot;Equal&quot;
+      value: &quot;api&quot;
+      effect: &quot;NoSchedule&quot;
+
+# Example: Allow PostgreSQL pods to run on database-dedicated nodes
+postgresql:
+  tolerations:
+    - key: &quot;database&quot;
+      operator: &quot;Equal&quot;
+      value: &quot;postgresql&quot;
+      effect: &quot;NoSchedule&quot;
+
+# Example: Multiple tolerations for ClickHouse
+clickhouse:
+  tolerations:
+    - key: &quot;dedicated&quot;
+      operator: &quot;Equal&quot;
+      value: &quot;analytics&quot;
+      effect: &quot;NoSchedule&quot;
+    - key: &quot;workload&quot;
+      operator: &quot;Equal&quot;
+      value: &quot;heavy&quot;
+      effect: &quot;NoExecute&quot;
+</code></pre>
+<p><strong>Available components:</strong><br />
+- <code>api.tolerations</code> - Tolerations for API pods<br />
+- <code>dashboard.tolerations</code> - Tolerations for Dashboard pods<br />
+- <code>worker.tolerations</code> - Tolerations for Worker pods<br />
+- <code>postgresql.tolerations</code> - Tolerations for PostgreSQL pods<br />
+- <code>redis.tolerations</code> - Tolerations for Redis pods<br />
+- <code>clickhouse.tolerations</code> - Tolerations for ClickHouse pods</p>
+<p><strong>Toleration effects:</strong><br />
+- <code>NoSchedule</code> - Pods will not be scheduled on tainted nodes unless they have a matching toleration<br />
+- <code>PreferNoSchedule</code> - Kubernetes will try to avoid scheduling pods on tainted nodes, but it's not required<br />
+- <code>NoExecute</code> - Pods already running on the node will be evicted if they don't have a matching toleration</p>
 <h2>Upgrading</h2>
 <p>To upgrade to a newer version:</p>
 <pre><code class="language-bash">helm repo update
