@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenPanel Helm Chart Repository</title>
+  <meta name="go-import" content="github.com/yashGoyal40/openpanel git https://github.com/yashGoyal40/openpanel.git">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #24292e;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #ffffff;
+    }
+    h1 {
+      color: #2664EB;
+      border-bottom: 2px solid #eaecef;
+      padding-bottom: 10px;
+      margin-top: 0;
+    }
+    h2 {
+      color: #2664EB;
+      border-bottom: 1px solid #eaecef;
+      padding-bottom: 8px;
+      margin-top: 30px;
+    }
+    h3 {
+      color: #2664EB;
+      margin-top: 24px;
+    }
+    code {
+      background: #f4f4f4;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 85%;
+    }
+    pre {
+      background: #f6f8fa;
+      border: 1px solid #e1e4e8;
+      padding: 16px;
+      border-radius: 6px;
+      overflow-x: auto;
+      line-height: 1.45;
+    }
+    pre code {
+      background: transparent;
+      padding: 0;
+      border-radius: 0;
+    }
+    ul, ol {
+      padding-left: 30px;
+    }
+    li {
+      margin: 8px 0;
+    }
+    a {
+      color: #2664EB;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    blockquote {
+      border-left: 4px solid #dfe2e5;
+      padding-left: 16px;
+      color: #6a737d;
+      margin: 0;
+    }
+    .repo-header {
+      background: #f6f8fa;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    .repo-header h2 {
+      margin-top: 0;
+      border: none;
+      padding: 0;
+    }
+    .repo-header code {
+      background: #ffffff;
+      border: 1px solid #e1e4e8;
+      padding: 4px 8px;
+      display: block;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="repo-header">
+    <h2>📦 OpenPanel Helm Chart Repository</h2>
+    <p><strong>Add this repository:</strong></p>
+    <code>helm repo add openpanel https://yashGoyal40.github.io/openpanel</code>
+    <code>helm repo update</code>
+    <p><strong>Install the chart:</strong></p>
+    <code>helm install openpanel openpanel/openpanel --namespace openpanel --create-namespace</code>
+    <p style="margin-bottom: 0;"><a href="index.yaml">View index.yaml</a> | <a href="https://github.com/yashGoyal40/openpanel">View on GitHub</a></p>
+  </div>
+  <h1>OpenPanel Helm Chart</h1>
+<p>A Helm chart for deploying OpenPanel analytics platform on Kubernetes.</p>
+<h2>Prerequisites</h2>
+<ul>
+<li>Kubernetes 1.19+</li>
+<li>Helm 3.0+</li>
+<li>kubectl configured to access your cluster</li>
+</ul>
+<h2>Installation</h2>
+<h3>Quick Start</h3>
+<ol>
+<li>
+<p><strong>Clone or navigate to the chart directory:</strong><br />
+<code>bash
+   cd openpanel</code></p>
+</li>
+<li>
+<p><strong>Review and update <code>values.yaml</code></strong> with your configuration:</p>
+</li>
+<li>Update domain names</li>
+<li>Set PostgreSQL configuration (self-hosted or external)</li>
+<li>
+<p>Configure secrets (cookie secret, API keys, etc.)</p>
+</li>
+<li>
+<p><strong>Install the chart:</strong><br />
+<code>bash
+   helm install openpanel . --namespace openpanel --create-namespace</code></p>
+</li>
+</ol>
+<h3>Using External PostgreSQL</h3>
+<p>To use an external PostgreSQL database:</p>
+<ol>
+<li>Set <code>postgresql.enabled: false</code> in <code>values.yaml</code></li>
+<li>Configure <code>externalPostgresql</code> section:<br />
+<code>yaml
+   externalPostgresql:
+     host: "your-postgres-host"
+     port: 5432
+     user: postgres
+     password: "your-password"
+     database: openpanel
+     schema: public</code></li>
+</ol>
+<h3>Using Self-Hosted PostgreSQL</h3>
+<p>To deploy PostgreSQL in Kubernetes:</p>
+<ol>
+<li>Set <code>postgresql.enabled: true</code> in <code>values.yaml</code></li>
+<li>Configure PostgreSQL settings:<br />
+<code>yaml
+   postgresql:
+     enabled: true
+     user: postgres
+     password: "your-secure-password"
+     database: postgres
+     persistence:
+       size: 20Gi</code></li>
+</ol>
+<h2>Configuration</h2>
+<h3>Key Configuration Options</h3>
+<h4>PostgreSQL</h4>
+<ul>
+<li><code>postgresql.enabled</code>: Enable/disable self-hosted PostgreSQL</li>
+<li><code>externalPostgresql.*</code>: Configuration for external PostgreSQL</li>
+</ul>
+<h4>Redis</h4>
+<ul>
+<li><code>redis.enabled</code>: Enable/disable self-hosted Redis</li>
+<li><code>externalRedis.*</code>: Configuration for external Redis</li>
+</ul>
+<h4>ClickHouse</h4>
+<ul>
+<li><code>clickhouse.enabled</code>: Enable/disable self-hosted ClickHouse</li>
+<li><code>externalClickhouse.*</code>: Configuration for external ClickHouse</li>
+</ul>
+<h4>Ingress</h4>
+<ul>
+<li><code>ingress.enabled</code>: Enable/disable ingress</li>
+<li><code>ingress.type</code>: Choose <code>httpproxy</code> (Contour) or <code>standard</code> (nginx/traefik)</li>
+<li><code>ingress.fqdn</code>: Your domain name</li>
+</ul>
+<h4>Application Components</h4>
+<ul>
+<li><code>api.enabled</code>: Enable/disable API service</li>
+<li><code>dashboard.enabled</code>: Enable/disable Dashboard service</li>
+<li><code>worker.enabled</code>: Enable/disable Worker service</li>
+</ul>
+<h3>Required Secrets</h3>
+<p>Before installation, make sure to update these in <code>values.yaml</code>:</p>
+<ol>
+<li><strong>COOKIE_SECRET</strong>: Generate with <code>openssl rand -base64 32</code></li>
+<li><strong>Database passwords</strong>: Update PostgreSQL credentials</li>
+<li><strong>API keys</strong>: Configure email, AI, and OAuth keys as needed</li>
+</ol>
+<h2>Upgrading</h2>
+<pre><code class="language-bash">helm upgrade openpanel . --namespace openpanel
+</code></pre>
+<h2>Uninstallation</h2>
+<pre><code class="language-bash">helm uninstall openpanel --namespace openpanel
+</code></pre>
+<p><strong>Note:</strong> This will delete all resources including persistent volumes. Make sure to backup your data before uninstalling.</p>
+<h2>Troubleshooting</h2>
+<h3>Check Pod Status</h3>
+<pre><code class="language-bash">kubectl get pods -n openpanel
+</code></pre>
+<h3>View Logs</h3>
+<pre><code class="language-bash"># API logs
+kubectl logs -f deployment/op-api -n openpanel
+
+# Dashboard logs
+kubectl logs -f deployment/op-dashboard -n openpanel
+
+# Worker logs
+kubectl logs -f deployment/op-worker -n openpanel
+</code></pre>
+<h3>Check Services</h3>
+<pre><code class="language-bash">kubectl get svc -n openpanel
+</code></pre>
+<h3>Check ConfigMap and Secrets</h3>
+<pre><code class="language-bash">kubectl get configmap openpanel-config -n openpanel -o yaml
+kubectl get secret openpanel-secrets -n openpanel -o yaml
+</code></pre>
+<h2>Values Reference</h2>
+<p>See <code>values.yaml</code> for all available configuration options with detailed comments.</p>
+<h2>Support</h2>
+<p>For issues and questions, please refer to the OpenPanel documentation or create an issue in the repository.</p>
+</body>
+</html>
