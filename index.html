@@ -471,6 +471,58 @@ clickhouse:
 - <code>NoSchedule</code> - Pods will not be scheduled on tainted nodes unless they have a matching toleration<br />
 - <code>PreferNoSchedule</code> - Kubernetes will try to avoid scheduling pods on tainted nodes, but it's not required<br />
 - <code>NoExecute</code> - Pods already running on the node will be evicted if they don't have a matching toleration</p>
+<h3>Pod Affinity and Anti-Affinity</h3>
+<p>You can configure pod affinity and anti-affinity rules to control pod scheduling based on node labels or other pods:</p>
+<pre><code class="language-yaml"># Example: Schedule API pods only on nodes with specific label
+api:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: app
+            operator: In
+            values:
+            - openpanel
+
+# Example: Schedule PostgreSQL pods with node affinity
+postgresql:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: app
+            operator: In
+            values:
+            - openpanel
+
+# Example: Pod anti-affinity to spread pods across nodes
+api:
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+            - key: app
+              operator: In
+              values:
+              - openpanel-api
+          topologyKey: kubernetes.io/hostname
+</code></pre>
+<p><strong>Available components:</strong><br />
+- <code>api.affinity</code> - Affinity rules for API pods<br />
+- <code>dashboard.affinity</code> - Affinity rules for Dashboard pods<br />
+- <code>worker.affinity</code> - Affinity rules for Worker pods<br />
+- <code>postgresql.affinity</code> - Affinity rules for PostgreSQL pods<br />
+- <code>redis.affinity</code> - Affinity rules for Redis pods<br />
+- <code>clickhouse.affinity</code> - Affinity rules for ClickHouse pods</p>
+<p><strong>Affinity types:</strong><br />
+- <code>nodeAffinity</code> - Control which nodes pods can be scheduled on based on node labels<br />
+- <code>podAffinity</code> - Schedule pods together with other pods matching certain labels<br />
+- <code>podAntiAffinity</code> - Avoid scheduling pods together with other pods matching certain labels</p>
 <h2>Upgrading</h2>
 <p>To upgrade to a newer version:</p>
 <pre><code class="language-bash">helm repo update
