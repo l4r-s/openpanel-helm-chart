@@ -138,7 +138,10 @@ ingress:
   type: standard  # or &quot;httpproxy&quot; for Contour
   fqdn: analytics.example.com
   standard:
-    tlsSecretName: openpanel-tls
+    className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: &quot;letsencrypt-prod&quot;  # For Let's Encrypt
+    # tlsSecretName: openpanel-tls  # Optional: Only needed for manual TLS certs
 
 # Application URLs
 config:
@@ -176,15 +179,33 @@ externalPostgresql:
 
   # For HTTPProxy (Contour)
   httpproxy:
-    tlsSecretName: openpanel-tls  # Replace &lt;tls_secret_name&gt;
+    tlsSecretName: openpanel-tls  # Optional: Only needed for manual TLS certs
 
   # For standard Ingress
   standard:
-    tlsSecretName: openpanel-tls  # Replace &lt;tls_secret_name&gt;
+    className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: &quot;letsencrypt-prod&quot;  # For Let's Encrypt via cert-manager
+    # tlsSecretName: openpanel-tls  # Optional: Leave empty/unset when using cert-manager/Let's Encrypt
 </code></pre>
+<p><strong>TLS Configuration Options:</strong></p>
+<ol>
+<li><strong>Using cert-manager/Let's Encrypt (Recommended):</strong></li>
+<li>Leave <code>tlsSecretName</code> empty or unset</li>
+<li>Add the <code>cert-manager.io/cluster-issuer</code> annotation (as shown above)</li>
+<li>
+<p>cert-manager will automatically create and manage the TLS certificate</p>
+</li>
+<li>
+<p><strong>Using Manual TLS Certificate:</strong></p>
+</li>
+<li>Set <code>tlsSecretName</code> to your existing Kubernetes secret name</li>
+<li>Ensure the secret exists in the same namespace before installation</li>
+</ol>
 <p><strong>Examples:</strong><br />
 - <code>fqdn: analytics.example.com</code><br />
-- <code>tlsSecretName: openpanel-tls</code> (if using cert-manager, this will be auto-generated)</p>
+- For cert-manager: Leave <code>tlsSecretName</code> unset (or commented out)<br />
+- For manual certs: <code>tlsSecretName: openpanel-tls</code></p>
 <h3>2. Application URLs (Required)</h3>
 <p>Configure the API and Dashboard URLs to match your ingress FQDN:</p>
 <pre><code class="language-yaml">config:
@@ -289,9 +310,9 @@ secrets:
 </tr>
 <tr>
 <td><code>ingress.*.tlsSecretName</code></td>
-<td>✅ Yes</td>
+<td>⚠️ Conditional</td>
 <td><code>&lt;tls_secret_name&gt;</code></td>
-<td>TLS certificate secret name</td>
+<td>TLS certificate secret name (optional when using cert-manager/Let's Encrypt)</td>
 </tr>
 <tr>
 <td><code>config.apiUrl</code></td>
