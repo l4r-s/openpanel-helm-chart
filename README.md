@@ -55,7 +55,10 @@ ingress:
   type: standard  # or "httpproxy" for Contour
   fqdn: analytics.example.com
   standard:
-    tlsSecretName: openpanel-tls
+    className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"  # For Let's Encrypt
+    # tlsSecretName: openpanel-tls  # Optional: Only needed for manual TLS certs
 
 # Application URLs
 config:
@@ -102,16 +105,31 @@ ingress:
   
   # For HTTPProxy (Contour)
   httpproxy:
-    tlsSecretName: openpanel-tls  # Replace <tls_secret_name>
+    tlsSecretName: openpanel-tls  # Optional: Only needed for manual TLS certs
   
   # For standard Ingress
   standard:
-    tlsSecretName: openpanel-tls  # Replace <tls_secret_name>
+    className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"  # For Let's Encrypt via cert-manager
+    # tlsSecretName: openpanel-tls  # Optional: Leave empty/unset when using cert-manager/Let's Encrypt
 ```
+
+**TLS Configuration Options:**
+
+1. **Using cert-manager/Let's Encrypt (Recommended):**
+   - Leave `tlsSecretName` empty or unset
+   - Add the `cert-manager.io/cluster-issuer` annotation (as shown above)
+   - cert-manager will automatically create and manage the TLS certificate
+
+2. **Using Manual TLS Certificate:**
+   - Set `tlsSecretName` to your existing Kubernetes secret name
+   - Ensure the secret exists in the same namespace before installation
 
 **Examples:**
 - `fqdn: analytics.example.com`
-- `tlsSecretName: openpanel-tls` (if using cert-manager, this will be auto-generated)
+- For cert-manager: Leave `tlsSecretName` unset (or commented out)
+- For manual certs: `tlsSecretName: openpanel-tls`
 
 ### 2. Application URLs (Required)
 
@@ -242,7 +260,7 @@ secrets:
 | Configuration | Required | Placeholder | Description |
 |--------------|----------|-------------|-------------|
 | `ingress.fqdn` | ✅ Yes | `<fqdn>` | Your domain name |
-| `ingress.*.tlsSecretName` | ✅ Yes | `<tls_secret_name>` | TLS certificate secret name |
+| `ingress.*.tlsSecretName` | ⚠️ Conditional | `<tls_secret_name>` | TLS certificate secret name (optional when using cert-manager/Let's Encrypt) |
 | `config.apiUrl` | ✅ Yes | `<fqdn>` | Full API URL |
 | `config.dashboardUrl` | ✅ Yes | `<fqdn>` | Full Dashboard URL |
 | `config.googleRedirectUri` | ✅ Yes | `<fqdn>` | OAuth callback URL |

@@ -11,10 +11,13 @@ metadata:
 {{ toYaml .Values.ingress.standard.annotations | indent 4 }}
 spec:
   ingressClassName: {{ .Values.ingress.standard.className }}
+{{- $tlsSecretName := .Values.ingress.standard.tlsSecretName | default "" }}
+{{- if $tlsSecretName }}
   tls:
     - hosts:
         - {{ .Values.ingress.fqdn }}
-      secretName: {{ .Values.ingress.standard.tlsSecretName }}
+      secretName: {{ $tlsSecretName }}
+{{- end }}
   rules:
     - host: {{ .Values.ingress.fqdn }}
       http:
