@@ -122,10 +122,10 @@ helm repo update
 </code></pre>
 <p>Then edit <code>my-values.yaml</code> with your configuration (see <a href="#required-configuration">Required Configuration</a> below).</p>
 <h3>Step 3: Install OpenPanel</h3>
-<pre><code class="language-bash">helm install my-openpanel openpanel/openpanel --version 0.1.0 --namespace openpanel --create-namespace -f my-values.yaml
+<pre><code class="language-bash">helm install my-openpanel openpanel/openpanel --version 0.6.0 --namespace openpanel --create-namespace -f my-values.yaml
 </code></pre>
 <p>Or if you want to override specific values directly:</p>
-<pre><code class="language-bash">helm install my-openpanel openpanel/openpanel --version 0.1.0 --namespace openpanel --create-namespace \
+<pre><code class="language-bash">helm install my-openpanel openpanel/openpanel --version 0.6.0 --namespace openpanel --create-namespace \
   --set ingress.fqdn=your-domain.com \
   --set config.apiUrl=https://your-domain.com/api \
   --set secrets.cookieSecret=$(openssl rand -base64 32)
@@ -166,7 +166,7 @@ externalPostgresql:
   schema: public
 </code></pre>
 <p>Then install with:</p>
-<pre><code class="language-bash">helm install my-openpanel openpanel/openpanel --version 0.1.0 --namespace openpanel --create-namespace -f my-values.yaml
+<pre><code class="language-bash">helm install my-openpanel openpanel/openpanel --version 0.6.0 --namespace openpanel --create-namespace -f my-values.yaml
 </code></pre>
 <h2>Required Configuration</h2>
 <p>The following values <strong>MUST</strong> be configured before installation. These are marked with <code>&lt;&gt;</code> placeholders in the default <code>values.yaml</code> and will prevent the chart from working correctly if left unchanged.</p>
@@ -451,6 +451,77 @@ worker:
       memory: &quot;2Gi&quot;
       cpu: &quot;2000m&quot;
 </code></pre>
+<h3>Horizontal Pod Autoscaler (HPA)</h3>
+<p>Enable automatic scaling of pods based on CPU and memory utilization. HPA can be configured for the API, Dashboard, and Worker components.</p>
+<p><strong>Prerequisites:</strong><br />
+- Kubernetes Metrics Server must be installed in your cluster<br />
+- Resource requests must be set for the pods (see <a href="#resource-limits">Resource Limits</a> above)</p>
+<p><strong>Basic HPA Configuration:</strong></p>
+<pre><code class="language-yaml">api:
+  hpa:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+
+dashboard:
+  hpa:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+
+worker:
+  hpa:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+</code></pre>
+<p><strong>HPA Configuration Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enabled</code></td>
+<td>Enable/disable HPA for the component</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>minReplicas</code></td>
+<td>Minimum number of pods</td>
+<td><code>1</code></td>
+</tr>
+<tr>
+<td><code>maxReplicas</code></td>
+<td>Maximum number of pods</td>
+<td><code>10</code></td>
+</tr>
+<tr>
+<td><code>targetCPUUtilizationPercentage</code></td>
+<td>Target CPU utilization percentage (optional)</td>
+<td><code>70</code></td>
+</tr>
+<tr>
+<td><code>targetMemoryUtilizationPercentage</code></td>
+<td>Target memory utilization percentage (optional)</td>
+<td><code>80</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Important Notes:</strong><br />
+- HPA requires resource requests to be set on pods. Make sure you've configured <code>resources.requests</code> for the component.<br />
+- If both CPU and memory targets are set, HPA will scale when either threshold is exceeded.<br />
+- For production environments, consider setting <code>minReplicas</code> to 2 or higher for high availability.</p>
 <h3>Taints and Tolerations</h3>
 <p>If your Kubernetes cluster has tainted nodes, you can configure tolerations for each component to allow pods to be scheduled on those nodes:</p>
 <pre><code class="language-yaml"># Example: Allow API pods to run on nodes with a dedicated taint

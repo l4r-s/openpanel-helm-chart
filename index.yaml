@@ -3,9 +3,9 @@ entries:
   openpanel:
   - apiVersion: v2
     appVersion: latest
-    created: "2025-12-02T15:32:29.162391977Z"
+    created: "2025-12-03T10:39:09.213764707Z"
     description: A Helm chart for OpenPanel analytics platform
-    digest: 69e37fc1037c9f98d0f65c753b4012c9f1fdc129af9c82db192c91bc9f21e94d
+    digest: b0c8f882c29bbe11b60d683c6f346553a145ff3b461c9da055e798f055554896
     home: https://github.com/yashGoyal40
     icon: https://d4.alternativeto.net/-3T-Cph-ZdEcMFklRECy64Qb3JSlmiUa-o2TGZ4pfkI/rs:fit:140:140:0/g:ce:0:0/exar:1/YWJzOi8vZGlzdC9pY29ucy9vcGVucGFuZWwtZGV2XzIzMjU4Ni5zdmc.svg
     keywords:
@@ -20,6 +20,6 @@ entries:
     - https://github.com/yashGoyal40/openpanel
     type: application
     urls:
-    - https://yashGoyal40.github.io/openpanel/openpanel-0.5.0.tgz
-    version: 0.5.0
-generated: "2025-12-02T15:32:29.144259318Z"
+    - https://yashGoyal40.github.io/openpanel/openpanel-0.6.0.tgz
+    version: 0.6.0
+generated: "2025-12-03T10:39:09.193142135Z"
